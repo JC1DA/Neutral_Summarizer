@@ -139,25 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
   async function getSettings() {
     try {
       if (typeof window.loadSettings === 'function') {
-        const settings = await window.loadSettings();
-        // Ensure default values are present
-        const defaultSettings = {
-          apiUrl: 'https://openrouter.ai/api/v1',
-          apiKey: '',
-          modelName: 'qwen/qwen3-235b-a22b-2507',
-          systemPrompt: `You are a helpful assistant that summarizes web pages. 
-Please provide a concise, neutral summary of the content provided. 
-Focus on the main points and key information.
-Make sure you separate between information and opinions.
-Breakdown them in two separated sessions: "Information" and "Opinions from writer"
-Use markdown format for users to read.
-Notes:
-* If user asks following questions after the summary, just answer them based on available information. You don't need to include "Opinions from writer" session anymore.`,
-          sidebarWidth: 400,
-          fontSize: 14
-        };
-        const mergedSettings = {...defaultSettings, ...settings};
-        return mergedSettings;
+        return await window.loadSettings();
       }
       return {};
     } catch (error) {
@@ -322,7 +304,7 @@ document.getElementById('settings-form').addEventListener('submit', function(e) 
 document.addEventListener('DOMContentLoaded', function() {
   loadSettingsForm();
   // Also apply settings immediately when the page loads
-  getSettings().then(settings => {
+  window.loadSettings().then(settings => {
     if (settings) {
       applySettings(settings);
     }
