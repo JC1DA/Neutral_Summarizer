@@ -17,7 +17,7 @@ Neutral Summarizer is a Chrome extension that allows you to summarize web pages 
 1. Download or clone this repository
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable "Developer mode" in the top right corner
-4. Click "Load unpacked" and select the extension directory
+4. Click "Load unpacked" and select the `src` directory
 
 ## Configuration
 
@@ -49,7 +49,16 @@ Benefits of streaming mode:
 
 The extension uses the following default system prompt for summarization:
 
-"You are a helpful assistant that summarizes web pages. Please provide a concise summary of the content provided. Focus on the main points and key information. Keep your summary to 3-5 paragraphs."
+```
+You are a helpful assistant that summarizes web pages. 
+Please provide a concise, neutral summary of the content provided. 
+Focus on the main points and key information.
+Make sure you separate between information and opinions.
+Breakdown them in two separated sessions: "Information" and "Opinions from writer"
+Use markdown format for users to read.
+Notes:
+* If user asks following questions after the summary, just answer them based on available information. You don't need to include "Opinions from writer" session anymore.
+```
 
 You can customize this prompt in the Settings tab to change how the AI summarizes content.
 
