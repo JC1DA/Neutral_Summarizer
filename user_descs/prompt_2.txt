@@ -1,0 +1,42 @@
+# Neutral Summarizer Chrome Extension - Requirements
+
+## Overview
+A Chrome extension that summarizes web pages and enables chat functionality with an AI model about the page content, with all interactions happening in a sidebar that expands on the right side of the current webpage.
+
+## Core Features
+
+### 1. Extension Interface
+- When clicked, the extension expands a sidebar on the right side of the current webpage
+- The sidebar contains two tabs: "Content" and "Settings"
+
+### 2. Settings Tab
+The settings tab allows users to configure the AI model with these options:
+- Base OpenAI Compatible URL (default: https://openrouter.ai/api/v1)
+- API Key
+- Model Name (default: qwen/qwen3-235b-a22b-2507)
+- System Prompt (with a default prompt provided)
+- Sidebar Width (300-800 pixels, default: 400)
+- Font Size (10-24 pixels, default: 14)
+- Save button to persist settings across sessions
+
+### 3. Content Tab
+The content tab serves as a chat interface with these features:
+- Summarize button: Generates a summary of the current web page content
+- Clear button: Clears all messages from the chat area
+- Chat display area: Shows conversation between user and AI
+- Message input field: Allows users to ask questions about the page content
+- Send button: Submits user questions to the AI
+
+### 4. Functionality Requirements
+- All API calls must use streaming mode to provide real-time updates as the AI generates responses
+- The summarization feature uses the system prompt configured in the settings
+- After initial summarization, users can continue chatting with the AI about the page content
+- The extension must track and properly display which messages are from the user vs. the AI
+- Settings are persisted using Chrome's storage API
+
+### 5. Technical Requirements
+- Built as a Chrome extension using manifest version 3
+- Uses modern JavaScript with async/await for API calls
+- Implements proper error handling for API requests
+- Follows Chrome extension security best practices
+- Responsive design that works with the configurable sidebar width
