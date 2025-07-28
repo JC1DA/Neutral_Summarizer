@@ -44,11 +44,13 @@ document.addEventListener('DOMContentLoaded', function() {
       // Get settings
       const settings = await getSettings();
       
-      // Generate summary using AI
-      const summary = await generateSummary(pageContent, settings);
+      // Create AI message element before streaming
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('chat-message', 'ai');
+      chatMessages.appendChild(messageElement);
       
-      // Display summary in chat
-      addMessageToChat('AI', summary);
+      // Generate summary using AI with streaming
+      await generateSummary(pageContent, settings, messageElement);
     } catch (error) {
       addMessageToChat('AI', `Error: ${error.message}`);
     } finally {
@@ -157,18 +159,15 @@ document.addEventListener('DOMContentLoaded', function() {
       // Get settings
       const settings = await getSettings();
       
-      // Generate response using AI
-      const response = await generateResponse(message, pageContent, settings);
-      
-      // Display response in chat
-      addMessageToChat('AI', response);
+      // Generate response using AI with streaming
+      await generateResponse(message, pageContent, settings);
     } catch (error) {
       addMessageToChat('AI', `Error: ${error.message}`);
     }
   }
   
-  // Function to generate summary
-  async function generateSummary(pageContent, settings) {
+  // Function to generate summary with streaming
+  async function generateSummary(pageContent, settings, messageElement) {
     try {
       const headers = {
         'Content-Type': 'application/json'
@@ -194,7 +193,8 @@ document.addEventListener('DOMContentLoaded', function() {
               content: `Please summarize the following web page content:\n\n${pageContent}`
             }
           ],
-          temperature: 0.7
+          temperature: 0.7,
+          stream: true  // Enable streaming
         })
       });
       
@@ -202,16 +202,66 @@ document.addEventListener('DOMContentLoaded', function() {
         throw new Error(`API request failed with status ${response.status}`);
       }
       
-      const data = await response.json();
-      return data.choices[0].message.content.trim();
+      // Handle streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let fullContent = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Process complete lines
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // Keep incomplete line in buffer
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6); // Remove 'data: ' prefix
+            
+            if (data === '[DONE]') {
+              // Scroll to bottom when done
+              const chatMessages = document.getElementById('chat-messages');
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+              return fullContent.trim();
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices[0]?.delta?.content;
+              if (content) {
+                fullContent += content;
+                // Update the message element with streaming content
+                messageElement.innerHTML = parseMarkdown(fullContent);
+                
+                // Scroll to bottom
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+              }
+            } catch (e) {
+              // Ignore parsing errors for incomplete JSON
+            }
+          }
+        }
+      }
+      
+      return fullContent.trim();
     } catch (error) {
       throw new Error(`Failed to generate summary: ${error.message}`);
     }
   }
   
-  // Function to generate response
+  // Function to generate response with streaming
   async function generateResponse(userMessage, pageContent, settings) {
     try {
+      // Create AI message element before streaming
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('chat-message', 'ai');
+      document.getElementById('chat-messages').appendChild(messageElement);
+      
       const headers = {
         'Content-Type': 'application/json'
       };
@@ -236,7 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
               content: `The current web page content is:\n\n${pageContent}\n\nUser question: ${userMessage}`
             }
           ],
-          temperature: 0.7
+          temperature: 0.7,
+          stream: true  // Enable streaming
         })
       });
       
@@ -244,12 +295,58 @@ document.addEventListener('DOMContentLoaded', function() {
         throw new Error(`API request failed with status ${response.status}`);
       }
       
-      const data = await response.json();
-      return data.choices[0].message.content.trim();
+      // Handle streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let fullContent = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Process complete lines
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // Keep incomplete line in buffer
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6); // Remove 'data: ' prefix
+            
+            if (data === '[DONE]') {
+              // Scroll to bottom when done
+              const chatMessages = document.getElementById('chat-messages');
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+              return fullContent.trim();
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices[0]?.delta?.content;
+              if (content) {
+                fullContent += content;
+                // Update the message element with streaming content
+                messageElement.innerHTML = parseMarkdown(fullContent);
+                
+                // Scroll to bottom
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+              }
+            } catch (e) {
+              // Ignore parsing errors for incomplete JSON
+            }
+          }
+        }
+      }
+      
+      return fullContent.trim();
     } catch (error) {
       throw new Error(`Failed to generate response: ${error.message}`);
     }
   }
+  
   
   // Load settings when settings tab is opened
   const settingsTabButton = document.querySelector('.tab-button[data-tab="settings"]');
