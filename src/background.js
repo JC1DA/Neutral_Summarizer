@@ -1,5 +1,11 @@
 // Background script for Neutral Summarizer
 
+// Listen for clicks on the extension icon
+chrome.action.onClicked.addListener((tab) => {
+  // Send message to content script to toggle sidebar
+  chrome.tabs.sendMessage(tab.id, {action: 'toggleSidebar'});
+});
+
 // Listen for messages from content scripts and popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getPageContent') {
