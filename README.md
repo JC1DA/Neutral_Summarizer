@@ -36,6 +36,13 @@ In the Settings tab, you can configure:
 4. Use the chat interface to ask questions about the page content
 5. Configure your API settings in the Settings tab
 
+## Examples
+
+Here are some examples of the Neutral Summarizer in action:
+
+![Example 1](data/images/example_1.png)
+![Example 2](data/images/example_2.png)
+
 ## Streaming Mode
 
 The extension uses streaming mode for all API calls to provide real-time updates as the AI generates responses. This means you'll see the AI's response appear gradually in the chat interface, rather than waiting for the entire response to complete. This provides a better user experience as you can start reading the response while it's still being generated.
