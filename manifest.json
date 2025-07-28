@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Neutral Summarizer",
+  "version": "1.0",
+  "description": "Summarize web pages and chat with AI about content",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["sidebar.html", "styles.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
