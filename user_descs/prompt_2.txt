@@ -7,7 +7,9 @@ A Chrome extension that summarizes web pages and enables chat functionality with
 
 ### 1. Extension Interface
 - When clicked, the extension expands a sidebar on the right side of the current webpage
+- The sidebar contains a header with a close button (✕) in the top-right corner
 - The sidebar contains two tabs: "Content" and "Settings"
+- The close button allows users to collapse the sidebar and return to the full webpage view
 
 ### 2. Settings Tab
 The settings tab allows users to configure the AI model with these options:
@@ -21,6 +23,7 @@ The settings tab allows users to configure the AI model with these options:
 
 ### 3. Content Tab
 The content tab serves as a chat interface with these features:
+- Two equally-sized buttons horizontally aligned: "Summarize Page" and "Clear Chat"
 - Summarize button: Generates a summary of the current web page content
 - Clear button: Clears all messages from the chat area
 - Chat display area: Shows conversation between user and AI
@@ -33,6 +36,7 @@ The content tab serves as a chat interface with these features:
 - After initial summarization, users can continue chatting with the AI about the page content
 - The extension must track and properly display which messages are from the user vs. the AI
 - Settings are persisted using Chrome's storage API
+- The sidebar can be closed using the close button in the header or by clicking the extension icon again
 
 ### 5. Technical Requirements
 - Built as a Chrome extension using manifest version 3
@@ -40,3 +44,4 @@ The content tab serves as a chat interface with these features:
 - Implements proper error handling for API requests
 - Follows Chrome extension security best practices
 - Responsive design that works with the configurable sidebar width
+- Uses message passing between background script, content script, and popup for sidebar management
