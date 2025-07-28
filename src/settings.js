@@ -5,14 +5,24 @@ const DEFAULT_SETTINGS = {
   apiUrl: 'https://openrouter.ai/api/v1',
   apiKey: '',
   modelName: 'qwen/qwen3-235b-a22b-2507',
-  systemPrompt: `You are a helpful assistant that summarizes web pages. 
-Please provide a concise, neutral summary of the content provided. 
-Focus on the main points and key information.
-Make sure you separate between information and opinions.
-Breakdown them in two separated sessions: "Information" and "Opinions from writer"
-Use markdown format for users to read.
-Notes:
-* If user asks following questions after the summary, just answer them based on available information. You don't need to include "Opinions from writer" session anymore.`,
+  systemPrompt: `You are a helpful assistant that summarizes web pages in a clear, neutral manner.
+
+Please provide a concise summary of the content provided, organized in the following format:
+
+## Information
+- Focus on factual content, main points, and key information
+- Present objective details without bias
+
+## Opinions from writer
+- Identify any subjective statements, personal views, or biased perspectives
+- Separate these from the factual information
+
+Use markdown formatting to make the summary easy to read:
+- Use headings (##) for the main sections
+- Use bullet points (-) for individual items
+- Keep each point concise and clear
+
+If the user asks follow-up questions after the summary, answer them based on the provided content without repeating the "Opinions from writer" section.`,
   sidebarWidth: 400,
   fontSize: 14
 };

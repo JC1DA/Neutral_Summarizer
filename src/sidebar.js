@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
   summarizeButton.addEventListener('click', async () => {
     // Disable button during processing
     summarizeButton.disabled = true;
-    summarizeButton.textContent = 'Summarizing...';
+    const originalText = summarizeButton.textContent;
+    summarizeButton.textContent = '📝 Summarizing...';
     
     try {
       // Get current page content
@@ -49,14 +50,18 @@ document.addEventListener('DOMContentLoaded', function() {
       messageElement.classList.add('chat-message', 'ai');
       chatMessages.appendChild(messageElement);
       
+      // Add a temporary loading indicator
+      messageElement.innerHTML = '<em>Generating summary...</em>';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
       // Generate summary using AI with streaming
       await generateSummary(pageContent, settings, messageElement);
     } catch (error) {
-      addMessageToChat('AI', `Error: ${error.message}`);
+      addMessageToChat('AI', `❌ Error: ${error.message}`);
     } finally {
       // Re-enable button
       summarizeButton.disabled = false;
-      summarizeButton.textContent = 'Summarize Page';
+      summarizeButton.textContent = originalText;
     }
   });
   
@@ -162,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Generate response using AI with streaming
       await generateResponse(message, pageContent, settings);
     } catch (error) {
-      addMessageToChat('AI', `Error: ${error.message}`);
+      addMessageToChat('AI', `❌ Error: ${error.message}`);
     }
   }
   
