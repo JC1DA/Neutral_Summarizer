@@ -15,3 +15,4 @@ I want to make a Chrome extension that does webpage summarization. It must have 
 ** there should be a "Clear" button to clear all the content in the chat area.
 5) "Content" tab acts as a chat page, after getting the summary, users can chat with the AI models about the content of the page. You need to keep track which messages from the AI model and which messages from the user to display accordingly.
 6) when doing summarization, you'll need to use the "System prompt" in the "Settings" tab. There should be a default system prompt if users don't set it themselves.
+7) The extension should use streaming mode for API calls to provide real-time updates to users as the AI generates responses.
