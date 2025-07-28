@@ -1,5 +1,11 @@
 // Sidebar script to handle UI interactions
 document.addEventListener('DOMContentLoaded', function() {
+  // Close sidebar functionality
+  const closeButton = document.getElementById('close-sidebar');
+  closeButton.addEventListener('click', () => {
+    chrome.runtime.sendMessage({action: 'closeSidebar'});
+  });
+  
   // Tab switching functionality
   const tabButtons = document.querySelectorAll('.tab-button');
   const tabPanes = document.querySelectorAll('.tab-pane');

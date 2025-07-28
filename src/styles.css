@@ -36,6 +36,38 @@ body {
   flex-direction: column;
   background-color: white;
   box-shadow: var(--shadow);
+  position: relative;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.close-button {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.close-button:hover {
+  background-color: rgba(0,0,0,0.1);
+  color: var(--text-primary);
+  transform: scale(1.1);
 }
 
 /* Tab Navigation */

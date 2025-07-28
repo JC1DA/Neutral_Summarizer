@@ -28,6 +28,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true; // Keep message channel open for async response
   }
+  
+  if (request.action === 'closeSidebar') {
+    // Send message to content script to close sidebar
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, {action: 'toggleSidebar'});
+      }
+    });
+    return true;
+  }
 });
 
 // Initialize settings when extension is installed
