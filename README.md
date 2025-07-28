@@ -31,10 +31,9 @@ In the Settings tab, you can configure:
 ## Usage
 
 1. Click the Neutral Summarizer icon in your Chrome toolbar
-2. Click "Open Sidebar" to inject the sidebar into the current page
-3. Switch to the Content tab and click "Summarize Page" to get a summary
+2. Switch to the Content tab and click "Summarize Page" to get a summary
+3. Configure your API settings in the Settings tab
 4. Use the chat interface to ask questions about the page content
-5. Configure your API settings in the Settings tab
 
 ## Examples
 
