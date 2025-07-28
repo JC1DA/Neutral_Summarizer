@@ -65,6 +65,7 @@ Breakdown them in two separated sessions: "Information" and "Opinions from write
 Use markdown format for users to read.
 Notes:
 * If user asks following questions after the summary, just answer them based on available information. You don't need to include "Opinions from writer" session anymore.
+* Show the most important information first
 ```
 
 You can customize this prompt in the Settings tab to change how the AI summarizes content.
