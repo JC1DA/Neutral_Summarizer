@@ -106,7 +106,8 @@ body {
   margin-bottom: 20px;
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 #summarize-button {
@@ -124,6 +125,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  flex: 1;
 }
 
 #summarize-button:hover {
@@ -150,6 +152,7 @@ body {
   font-weight: 500;
   transition: var(--transition);
   box-shadow: var(--shadow);
+  flex: 1;
 }
 
 #clear-button:hover {
@@ -338,16 +341,7 @@ body {
 }
 
 /* Responsive adjustments */
-@media (max-width: 500px) {
-  .content-header {
-    flex-direction: column;
-  }
-  
-  #summarize-button,
-  #clear-button {
-    width: 100%;
-  }
-  
+@media (max-width: 600px) {
   .chat-message.user {
     margin-left: 10%;
   }
