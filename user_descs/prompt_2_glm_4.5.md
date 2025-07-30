@@ -17,6 +17,7 @@ A Chrome extension that allows users to summarize web pages and chat with an AI 
 The settings tab must allow users to configure:
 - **Base OpenAI Compatible URL**: The API endpoint (default: https://openrouter.ai/api/v1)
 - **API Key**: Authentication key for the AI service
+- **DumplingAI API Key**: Authentication key for YouTube transcript service
 - **Model Name**: The AI model to use (default: qwen/qwen3-235b-a22b-2507)
 - **System Prompt**: Instructions for the AI (with a default prompt provided)
 - **Sidebar Width**: Adjustable between 300-800 pixels (default: 400)
@@ -70,6 +71,15 @@ The content tab must provide:
 - **Network Resilience**: Should handle network issues gracefully
 - **Configuration Validation**: Should validate API settings before use
 - **Connection Testing**: Should be able to test API connectivity
+
+### 9. YouTube Video Summarization Feature
+When visiting YouTube video pages, the extension provides special functionality:
+- **Automatic Detection**: Automatically detects YouTube video pages
+- **Transcription Button**: Adds a "Transcribe Video" button below the video title
+- **Transcript Retrieval**: Retrieves video transcripts using the DumplingAI API
+- **Video Summarization**: Summarizes video content using the configured AI model
+- **Continued Chat**: Allows continued chat with the AI about the video content
+- **API Key Requirement**: Requires DumplingAI API key configuration in Settings
 
 ## Non-Requirements
 - Icons are not needed for the extension

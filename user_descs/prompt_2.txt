@@ -38,7 +38,16 @@ The content tab serves as a chat interface with these features:
 - Settings are persisted using Chrome's storage API
 - The sidebar can be closed using the close button in the header or by clicking the extension icon again
 
-### 5. Technical Requirements
+### 5. YouTube Video Summarization Feature
+When visiting YouTube video pages, the extension provides special functionality:
+- Automatically detects YouTube video pages
+- Adds a "Transcribe Video" button below the video title
+- Retrieves video transcripts using the DumplingAI API
+- Summarizes video content using the configured AI model
+- Allows continued chat with the AI about the video content
+- Requires DumplingAI API key configuration in Settings
+
+### 6. Technical Requirements
 - Built as a Chrome extension using manifest version 3
 - Uses modern JavaScript with async/await for API calls
 - Implements proper error handling for API requests

@@ -1,6 +1,6 @@
 # Neutral Summarizer Chrome Extension
 
-Neutral Summarizer is a Chrome extension that allows you to summarize web pages and chat with an AI about the content. The extension provides a sidebar interface that can be toggled on any webpage.
+Neutral Summarizer is a Chrome extension that allows you to summarize web pages and chat with an AI about the content. The extension provides a sidebar interface that can be toggled on any webpage. It also includes special support for YouTube videos, allowing you to transcribe and summarize video content.
 
 ## Features
 
@@ -75,6 +75,32 @@ The extension works with any OpenAI-compatible API, including:
 
 - OpenAI
 - Local AI models with OpenAI-compatible APIs
+
+## YouTube Transcription Feature
+
+The Neutral Summarizer includes special support for YouTube videos. When you visit a YouTube video page, the extension will automatically add a "Transcribe Video" button below the video title. Clicking this button will:
+
+1. Retrieve the transcription of the YouTube video using the DumplingAI API
+2. Automatically summarize the video content in the sidebar
+3. Allow you to chat with the AI about the video content
+
+### Configuration
+
+To use the YouTube transcription feature, you need to configure your DumplingAI API key in the Settings tab:
+
+1. Go to the Settings tab in the sidebar
+2. Enter your DumplingAI API key in the "DumplingAi API Key" field
+3. Save your settings
+
+### How It Works
+
+1. When viewing a YouTube video, a "Transcribe Video" button appears below the video title
+2. Click the button to initiate transcription
+3. The extension retrieves the video transcript using the DumplingAI API
+4. The transcript is then summarized using your configured AI model
+5. You can continue to chat with the AI about the video content
+
+Note: The YouTube transcription feature requires an internet connection to access the DumplingAI API.
 
 ## Privacy
 
