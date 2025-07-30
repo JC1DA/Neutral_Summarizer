@@ -4,6 +4,7 @@
 const DEFAULT_SETTINGS = {
   apiUrl: 'https://openrouter.ai/api/v1',
   apiKey: '',
+  dumplingAiApiKey: '',
   modelName: 'qwen/qwen3-235b-a22b-2507',
   systemPrompt: `You are a helpful assistant that summarizes web pages in a clear, neutral manner.
 

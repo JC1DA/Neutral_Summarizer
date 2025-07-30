@@ -8,6 +8,10 @@
     "activeTab",
     "scripting"
   ],
+  "host_permissions": [
+    "https://app.dumplingai.com/*",
+    "https://*.youtube.com/*"
+  ],
   "action": {
   },
   "background": {

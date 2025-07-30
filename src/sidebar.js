@@ -28,6 +28,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
+  // Listen for messages from background script
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'startYouTubeTranscription') {
+      // Switch to content tab if not already active
+      const contentTabButton = document.querySelector('.tab-button[data-tab="content"]');
+      const contentTabPane = document.getElementById('content-tab');
+      
+      // Update active tab button
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      contentTabButton.classList.add('active');
+      
+      // Show content tab pane
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      contentTabPane.classList.add('active');
+      
+      // Start YouTube transcription
+      summarizeYouTubeVideo();
+      return true;
+    }
+  });
+  
   // Summarize button functionality
   const summarizeButton = document.getElementById('summarize-button');
   const chatMessages = document.getElementById('chat-messages');
@@ -39,6 +60,28 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   summarizeButton.addEventListener('click', async () => {
+    tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const activeTab = tabs[0];
+
+    // Check if we're on a YouTube page
+    const isYouTube = activeTab.url.includes('youtube.com') && 
+                      activeTab.url.includes('/watch');
+    
+    if (isYouTube) {
+      // For YouTube, get transcript and summarize that instead
+      await summarizeYouTubeVideo(activeTab.url);
+    } else {
+      // Regular page summarization
+      await summarizeRegularPage();
+    }
+  });
+  
+  // Function to summarize regular web pages
+  async function summarizeRegularPage() {
+    console.log("Summarizing regular page...");
+    const summarizeButton = document.getElementById('summarize-button');
+    const chatMessages = document.getElementById('chat-messages');
+    
     // Disable button during processing
     summarizeButton.disabled = true;
     const originalText = summarizeButton.textContent;
@@ -69,7 +112,177 @@ document.addEventListener('DOMContentLoaded', function() {
       summarizeButton.disabled = false;
       summarizeButton.textContent = originalText;
     }
-  });
+  }
+  
+  // Function to summarize YouTube videos
+  async function summarizeYouTubeVideo(videoUrl) {
+    console.log("Summarizing YouTube video...");
+    const summarizeButton = document.getElementById('summarize-button');
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Disable button during processing
+    summarizeButton.disabled = true;
+    const originalText = summarizeButton.textContent;
+    summarizeButton.textContent = '📝 Getting transcript...';
+    
+    try {
+      // Get settings (including DumplingAI API key)
+      const settings = await getSettings();
+      
+      // Get YouTube transcript
+      const transcriptData = await getYouTubeTranscript(settings.dumplingAiApiKey, videoUrl);
+      
+      if (!transcriptData || !transcriptData.transcript) {
+        throw new Error('Failed to get YouTube transcript');
+      }
+      
+      // Update button text
+      summarizeButton.textContent = '📝 Summarizing...';
+      
+      // Create AI message element before streaming
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('chat-message', 'ai');
+      chatMessages.appendChild(messageElement);
+      
+      // Add a temporary loading indicator
+      messageElement.innerHTML = '<em>Generating summary from transcript...</em>';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // Generate summary using AI with streaming
+      await generateYouTubeSummary(transcriptData.transcript, settings, messageElement);
+    } catch (error) {
+      addMessageToChat('AI', `❌ Error: ${error.message}`);
+    } finally {
+      // Re-enable button
+      summarizeButton.disabled = false;
+      summarizeButton.textContent = originalText;
+    }
+  }
+  
+  // Function to get YouTube transcript using DumplingAI API
+  async function getYouTubeTranscript(apiKey, videoUrl) {
+    const apiEndpoint = "https://app.dumplingai.com/api/v1/get-youtube-transcript";
+    
+    const headers = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    };
+    
+    const payload = {
+      videoUrl: videoUrl,
+      includeTimestamps: true,
+      timestampsToCombine: 5,
+    };
+    
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(payload),
+      });
+      
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+      }
+      
+      const transcriptData = await response.json();
+
+      console.log("Transcript Data:", transcriptData);
+
+      return transcriptData;
+    } catch (error) {
+      throw new Error(`Failed to get YouTube transcript: ${error.message}`);
+    }
+  }
+  
+  // Function to generate YouTube summary with streaming
+  async function generateYouTubeSummary(transcript, settings, messageElement) {
+    try {
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      
+      // Only add Authorization header if apiKey is not empty
+      if (settings.apiKey) {
+        headers['Authorization'] = `Bearer ${settings.apiKey}`;
+      }
+      
+      const response = await fetch(`${settings.apiUrl}/chat/completions`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          model: settings.modelName,
+          messages: [
+            {
+              role: "system",
+              content: settings.systemPrompt
+            },
+            {
+              role: "user",
+              content: `Please summarize the following YouTube video transcript:\n\n${transcript}`
+            }
+          ],
+          temperature: 0.7,
+          stream: true  // Enable streaming
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      
+      // Handle streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let fullContent = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Process complete lines
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // Keep incomplete line in buffer
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6); // Remove 'data: ' prefix
+            
+            if (data === '[DONE]') {
+              // Scroll to bottom when done
+              const chatMessages = document.getElementById('chat-messages');
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+              return fullContent.trim();
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices[0]?.delta?.content;
+              if (content) {
+                fullContent += content;
+                // Update the message element with streaming content
+                messageElement.innerHTML = parseMarkdown(fullContent);
+                
+                // Scroll to bottom
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+              }
+            } catch (e) {
+              // Ignore parsing errors for incomplete JSON
+            }
+          }
+        }
+      }
+      
+      return fullContent.trim();
+    } catch (error) {
+      throw new Error(`Failed to generate YouTube summary: ${error.message}`);
+    }
+  }
   
   // Chat functionality
   const chatInput = document.getElementById('chat-input');
@@ -367,14 +580,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Function to load settings into form
 async function loadSettingsForm() {
   try {
-    // Use the settings.js loadSettings function which properly merges defaults
-    const settings = await window.loadSettings();
-    document.getElementById('api-url').value = settings.apiUrl || '';
-    document.getElementById('api-key').value = settings.apiKey || '';
-    document.getElementById('model-name').value = settings.modelName || '';
-    document.getElementById('system-prompt').value = settings.systemPrompt || '';
-    document.getElementById('sidebar-width').value = settings.sidebarWidth || 400;
-    document.getElementById('font-size').value = settings.fontSize || 14;
+  // Use the settings.js loadSettings function which properly merges defaults
+  const settings = await window.loadSettings();
+  document.getElementById('api-url').value = settings.apiUrl || '';
+  document.getElementById('api-key').value = settings.apiKey || '';
+  document.getElementById('dumpling-ai-api-key').value = settings.dumplingAiApiKey || '';
+  document.getElementById('model-name').value = settings.modelName || '';
+  document.getElementById('system-prompt').value = settings.systemPrompt || '';
+  document.getElementById('sidebar-width').value = settings.sidebarWidth || 400;
+  document.getElementById('font-size').value = settings.fontSize || 14;
   } catch (error) {
     console.error('Error loading settings:', error);
   }
@@ -387,6 +601,7 @@ document.getElementById('settings-form').addEventListener('submit', function(e) 
   const settings = {
     apiUrl: document.getElementById('api-url').value,
     apiKey: document.getElementById('api-key').value,
+    dumplingAiApiKey: document.getElementById('dumpling-ai-api-key').value,
     modelName: document.getElementById('model-name').value,
     systemPrompt: document.getElementById('system-prompt').value,
     sidebarWidth: parseInt(document.getElementById('sidebar-width').value) || 400,

@@ -3,12 +3,13 @@
 // Listen for clicks on the extension icon
 chrome.action.onClicked.addListener((tab) => {
   // Send message to content script to toggle sidebar
-  chrome.tabs.sendMessage(tab.id, {action: 'toggleSidebar'});
+  chrome.tabs.sendMessage(tab.id, {action: 'toggleSidebar', url: tab.url});
 });
 
 // Listen for messages from content scripts and popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getPageContent') {
+    console.log("Received request to get page content");
     // Get the content of the current page
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       chrome.scripting.executeScript({
@@ -46,6 +47,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: 'updateSidebarWidth',
           width: request.width
+        });
+      }
+    });
+    return true;
+  }
+  
+  if (request.action === 'transcribeYouTube') {
+    // Open sidebar and send transcription request
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0]) {
+        // Toggle sidebar open
+        chrome.tabs.sendMessage(tabs[0].id, {action: 'toggleSidebar'}, () => {
+          // Send message to sidebar to start transcription
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: 'startYouTubeTranscription',
+            videoUrl: request.videoUrl
+          });
         });
       }
     });
