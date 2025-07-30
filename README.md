@@ -2,6 +2,18 @@
 
 A powerful Chrome extension that leverages AI to provide intelligent summarization and interactive chat capabilities for any web page, with specialized YouTube video analysis using transcript-based AI processing.
 
+## 🖼️ Extension Showcase
+
+Here's what the Neutral Summarizer extension looks like in action:
+
+### Example 1: YouTube Video Analysis
+![YouTube Video Analysis](data/images/example_1.png)
+*Extension analyzing a YouTube video with transcript-based AI processing*
+
+### Example 2: Settings Tab
+![Settings Interface](data/images/example_2.png)
+*Clean, modern sidebar interface*
+
 ## ✨ Key Features
 
 ### 🚀 Core Functionality
