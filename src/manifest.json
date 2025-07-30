@@ -1,31 +1,33 @@
 {
   "manifest_version": 3,
   "name": "Neutral Summarizer",
-  "version": "1.0",
-  "description": "Summarize web pages and chat with AI about content",
+  "version": "1.0.0",
+  "description": "Summarize web pages and chat with AI about page content through a sidebar interface",
   "permissions": [
-    "storage",
     "activeTab",
+    "storage",
     "scripting"
   ],
   "host_permissions": [
+    "https://openrouter.ai/*",
     "https://app.dumplingai.com/*",
-    "https://*.youtube.com/*"
+    "https://*/*"
   ],
-  "action": {
-  },
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ],
+  "action": {
+    "default_title": "Neutral Summarizer"
+  },
+  "content_scripts": [],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
   "web_accessible_resources": [
     {
-      "resources": ["sidebar.html", "styles.css"],
+      "resources": ["sidebar/*", "assets/*"],
       "matches": ["<all_urls>"]
     }
   ]

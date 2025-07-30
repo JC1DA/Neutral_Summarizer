@@ -5,6 +5,10 @@ A Chrome extension that allows users to summarize web pages and chat with an AI 
 
 ## Core Requirements
 
+### 0. Source Code
+- The source code must be put in `src` directory
+- The source code must be well-organized, clean and easy for junior developers to read and understand
+
 ### 1. Sidebar Interface
 - The sidebar must open immediately when clicking the extension icon
 - No popup should appear asking users to click again to open the sidebar
@@ -74,15 +78,20 @@ The content tab must provide:
 
 ### 9. YouTube Video Summarization Feature
 When visiting YouTube video pages, the extension provides special functionality:
-- **Automatic Detection**: Automatically detects YouTube video pages
-- **Transcription Button**: Adds a "Transcribe Video" button below the video title
+- **Automatic Detection**: Automatically detects YouTube video pages when clicking "Summarize Page". You don't need another button for Youtube.
 - **Transcript Retrieval**: Retrieves video transcripts using the DumplingAI API
 - **Video Summarization**: Summarizes video content using the configured AI model
 - **Continued Chat**: Allows continued chat with the AI about the video content
 - **API Key Requirement**: Requires DumplingAI API key configuration in Settings
 
+### 10. Visual Appearance
+- **Consistency** all components should have a consistent look and feel
+
 ## Non-Requirements
-- Icons are not needed for the extension
 - No separate popup window should be used
 - No browser action popup should appear before opening the sidebar
 - No additional browser permissions beyond what's necessary for core functionality
+
+## Notes
+- A sample to use DumplingAI API is provided in `extras/test_dumpling_api.js`
+- Some icons are provided in the `extras/icons` directory

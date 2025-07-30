@@ -1,106 +1,255 @@
 # Neutral Summarizer Chrome Extension
 
-Neutral Summarizer is a Chrome extension that allows you to summarize web pages and chat with an AI about the content. The extension provides a sidebar interface that can be toggled on any webpage. It also includes special support for YouTube videos, allowing you to transcribe and summarize video content.
+A powerful Chrome extension that leverages AI to provide intelligent summarization and interactive chat capabilities for any web page, with specialized YouTube video analysis using transcript-based AI processing.
 
-## Features
+## ✨ Key Features
 
-1. **Sidebar Interface**: Click the extension icon to open a sidebar on the right side of any webpage
-2. **Two Tabs**:
-   - **Content Tab**: Summarize the current page and chat with the AI about the content
-   - **Settings Tab**: Configure the AI model settings
-3. **AI Integration**: Uses OpenAI-compatible APIs for summarization and chat
-4. **Streaming Mode**: Real-time updates as the AI generates responses
-5. **Persistent Settings**: Saves your API configuration for future use
+### 🚀 Core Functionality
+- **Smart Sidebar Interface**: Clean, modern sidebar that slides in smoothly from the right
+- **Instant Access**: Click the extension icon to immediately open the sidebar - no secondary popups
+- **Tabbed Navigation**: Seamlessly switch between "Content" (chat) and "Settings" tabs
+- **Real-time Streaming Responses**: Watch AI responses generate word-by-word with live streaming
+- **Markdown Rendering**: Professional formatting with proper markdown support
+- **Chat History**: Continue conversations with context-aware AI responses
 
-## Installation
+### 🎬 Advanced YouTube Integration
+- **Automatic Detection**: Instantly recognizes YouTube video pages
+- **Transcript Retrieval**: Fetches complete video transcripts using DumplingAI API
+- **Enhanced Analysis**: AI analyzes both video content and transcript for comprehensive summaries
+- **Video Metadata**: Incorporates title, channel, views, likes, and description in analysis
 
-1. Download or clone this repository
-2. Open Chrome and navigate to `chrome://extensions`
-3. Enable "Developer mode" in the top right corner
-4. Click "Load unpacked" and select the `src` directory
+### 🎨 User Experience Enhancements
+- **Smart Chat Management**: "Summarize Page" automatically clears previous chat for focused analysis
+- **Enhanced Loading States**: Detailed progress messages for YouTube transcript retrieval
+- **Smooth Animations**: Elegant transitions and professional UI animations
+- **Auto-scrolling**: Chat interface automatically follows streaming content
+- **Visual Streaming Indicators**: Blinking cursor and pulse effects during AI response generation
 
-## Configuration
+### ⚙️ Advanced Customization
+- **Multi-API Support**: Compatible with OpenAI, OpenRouter, and other OpenAI-compatible APIs
+- **Flexible Configuration**: Support for multiple AI models and custom endpoints
+- **DumplingAI Integration**: Specialized API for YouTube transcript extraction
+- **UI Personalization**: Adjustable sidebar width (300-800px) and font size (10-24px)
+- **Persistent Settings**: All configurations saved across browser sessions
+- **Custom System Prompts**: Tailor AI behavior and output format
 
-In the Settings tab, you can configure:
+## 📦 Installation
 
-- **Base OpenAI Compatible URL**: The API endpoint (default: https://openrouter.ai/api/v1)
-- **API Key**: Your API key for authentication
-- **Model Name**: The AI model to use (default: qwen/qwen3-235b-a22b-2507)
-- **System Prompt**: Instructions for the AI on how to summarize content
+### Quick Start Installation
 
-## Usage
+#### Prerequisites
+- Google Chrome (version 88 or higher)
+- Active API keys for AI services (OpenAI/OpenRouter and DumplingAI)
 
-1. Click the Neutral Summarizer icon in your Chrome toolbar
-2. Switch to the Content tab and click "Summarize Page" to get a summary
-3. Configure your API settings in the Settings tab
-4. Use the chat interface to ask questions about the page content
+#### Step-by-Step Installation
 
-## Examples
+1. **Download the Extension**
+   - Download the extension files or clone the repository
+   ```bash
+   git clone https://github.com/JC1DA/Neutral_Summarizer
+   cd Neutral_Summarizer
+   ```
 
-Here are some examples of the Neutral Summarizer in action:
+2. **Enable Developer Mode in Chrome**
+   - Open Google Chrome
+   - Navigate to `chrome://extensions/`
+   - Find the "Developer mode" toggle in the top right corner
+   - Click to enable developer mode
 
-![Example 1](data/images/example_1.png)
-![Example 2](data/images/example_2.png)
+3. **Load the Extension**
+   - Click the "Load unpacked" button that appears
+   - Navigate to and select the `src` directory from the project folder
+   - The extension will be installed and appear in your extensions list
 
-## Streaming Mode
+4. **Verify Installation**
+   - Look for "Neutral Summarizer" in your extensions list
+   - Check that the extension icon appears in your Chrome toolbar
 
-The extension uses streaming mode for all API calls to provide real-time updates as the AI generates responses. This means you'll see the AI's response appear gradually in the chat interface, rather than waiting for the entire response to complete. This provides a better user experience as you can start reading the response while it's still being generated.
+5. **Pin to Toolbar** (Recommended)
+   - Click the puzzle piece icon (Extensions) in the Chrome toolbar
+   - Find "Neutral Summarizer" in the extensions list
+   - Click the pin icon next to it to add it to your toolbar for easy access
 
-Benefits of streaming mode:
-- Immediate feedback that the AI is processing your request
-- Reduced perceived wait time for longer responses
-- More natural conversation flow
+#### First Launch Setup
 
-## Default System Prompt
+1. **Click the Extension Icon**
+   - The Neutral Summarizer sidebar will open automatically
+   - You'll see tabs for "Content" and "Settings"
 
-The extension uses the following default system prompt for summarization:
+2. **Configure API Keys**
+   - Go to the "Settings" tab
+   - Enter your API keys:
+     - **OpenAI/OpenRouter API Key**: For AI summarization and chat
+     - **DumplingAI API Key**: For YouTube transcript retrieval
+   - Configure other settings as desired (model, prompts, UI preferences)
+
+3. **Test the Extension**
+   - Navigate to any web page
+   - Click the extension icon
+   - Click "Summarize Page" to test functionality
+
+## ⚙️ Configuration
+
+### First-Time Setup
+
+1. **Open the Extension**
+   - Click the Neutral Summarizer icon in your Chrome toolbar
+   - The sidebar will open automatically
+
+2. **Configure API Settings**
+   - Click the "Settings" tab
+   - Configure your API endpoints:
+     - **Base OpenAI Compatible URL**: Your API endpoint (default: `https://openrouter.ai/api/v1`)
+     - **API Key**: Your primary API key for AI services
+     - **DumplingAI API Key**: Specialized API key for YouTube transcript extraction
+     - **Model Name**: AI model to use (default: `qwen/qwen3-235b-a22b-2507`)
+     - **System Prompt**: Customizable AI instructions (pre-configured with optimal defaults)
+
+3. **Customize Appearance**
+   - **Sidebar Width**: Adjust between 300-800px using the slider
+   - **Font Size**: Adjust between 10-24px using the slider
+
+4. **Save Settings**
+   - Click "Save Settings" to persist your configuration
+   - Settings automatically restore across browser sessions
+
+## 🚀 Usage Guide
+
+### Basic Web Page Summarization
+
+1. **Navigate to any web page** you want to analyze
+2. **Click the Neutral Summarizer icon** in your Chrome toolbar
+3. **Click "Summarize Page"** in the Content tab
+4. **Watch the streaming response** generate in real-time
+5. **Ask follow-up questions** in the chat input
+
+### Advanced YouTube Video Analysis
+
+1. **Navigate to any YouTube video**
+2. **Click the Neutral Summarizer icon**
+3. **Click "Summarize Page"** - the extension will:
+   - **Stage 1**: Show "Retrieving Video Transcript..." while fetching from DumplingAI
+   - **Stage 2**: Show "Analyzing page content..." after transcript retrieval
+   - Generate comprehensive video analysis using transcript data
+4. **Chat about the video** with transcript-aware AI responses
+
+### Interactive Chat Features
+
+- **Real-time Streaming**: AI responses appear word-by-word with visual indicators
+- **Smart Chat Management**: "Summarize Page" clears previous chat for focused analysis
+- **Markdown Support**: Proper rendering of headers, lists, bold, italic, and code
+- **Context Awareness**: AI maintains conversation context throughout the session
+- **Auto-scrolling**: Interface automatically follows streaming content
+
+## 🔑 API Requirements
+
+### OpenRouter (Recommended)
+1. Create an account at [OpenRouter.ai](https://openrouter.ai)
+2. Generate an API key from your dashboard
+3. Use base URL: `https://openrouter.ai/api/v1`
+4. Benefits: Multiple model support, competitive pricing, streaming support
+
+### OpenAI
+1. Create an account at [OpenAI](https://openai.com)
+2. Generate an API key from account settings
+3. Use base URL: `https://api.openai.com/v1`
+4. Note: Ensure your API supports streaming responses
+
+### DumplingAI (YouTube Transcripts)
+1. Create an account at [DumplingAI](https://www.dumplingai.com/)
+2. Generate API key for YouTube transcript service
+3. Required for YouTube video analysis features
+4. Provides accurate, timestamped video transcripts
+
+## 🛠️ Troubleshooting
+
+### Common Issues & Solutions
+
+#### Extension Won't Load
+- Ensure Chrome version 88 or higher
+- Verify "Developer mode" is enabled in `chrome://extensions/`
+- Check you selected the correct `src` directory
+
+#### Streaming Responses Not Working
+- Verify your API provider supports streaming (`stream: true`)
+- Check network connection and API key validity
+- Ensure API endpoint supports Server-Sent Events (SSE)
+
+#### YouTube Features Not Working
+- Confirm DumplingAI API key is valid and has credits
+- Verify YouTube video has available captions/transcripts
+- Check video is publicly accessible (not private or restricted)
+
+#### Transcript Retrieval Errors
+- Ensure "Retrieving Video Transcript..." message appears
+- Check DumplingAI API service status
+- Verify video ID is correctly extracted from URL
+
+#### Performance Issues
+- For long pages, content is automatically truncated to 16000 characters
+- YouTube transcript retrieval may take 2-5 seconds depending on video length
+- Streaming responses provide immediate feedback even for long content
+
+## 🔒 Security & Privacy
+
+### Data Protection
+- **Zero Data Collection**: No personal data or usage analytics collected
+- **Local Storage Only**: Settings stored securely in browser's local storage
+- **Direct API Communication**: No intermediaries between extension and your APIs
+- **Temporary Processing**: Content processed only during active sessions
+
+### API Key Security
+- **Encrypted Storage**: API keys stored using Chrome's secure storage API
+- **Limited Transmission**: Keys sent only to your configured API endpoints
+- **No Third Parties**: Keys never shared with any external services except your APIs
+- **User Control**: Complete control over API key management
+
+### Content Processing
+- **Client-Side Extraction**: Web content processed locally before API calls
+- **Minimal Data Transfer**: Only essential content sent to AI services
+- **No Persistent Storage**: Processed content never stored permanently
+- **Transparent Processing**: Users can see exactly what data is being processed
+
+## 🏗️ Development
+
+### Project Architecture
 
 ```
-You are a helpful assistant that summarizes web pages. 
-Please provide a concise, neutral summary of the content provided. 
-Focus on the main points and key information.
-Make sure you separate between information and opinions.
-Breakdown them in two separated sessions: "Information" and "Opinions from writer"
-Use markdown format for users to read.
-Notes:
-* If user asks following questions after the summary, just answer them based on available information. You don't need to include "Opinions from writer" session anymore.
-* Show the most important information first
+src/
+├── manifest.json                 # Chrome extension manifest
+├── background.js                 # Background service worker (API calls)
+├── content.js                    # Content script (UI, streaming, logic)
+├── popup/
+│   ├── popup.html               # Extension popup
+│   └── popup.js                 # Popup logic
+├── sidebar/
+│   ├── components/
+│   │   ├── chat-component.js    # Chat interface with streaming
+│   │   ├── settings-component.js # Settings management
+│   │   └── markdown-renderer.js # Markdown formatting
+├── utils/
+│   ├── api-client.js            # OpenAI/DumplingAI API clients
+│   ├── content-extractor.js     # Web content extraction
+│   ├── storage-manager.js       # Chrome storage utilities
+│   └── youtube-detector.js      # YouTube page detection
+└── assets/
+    ├── icons/                   # Extension icons
+    └── lib/
+        └── marked.min.js        # Markdown parser
 ```
 
-You can customize this prompt in the Settings tab to change how the AI summarizes content.
+## 📄 License
 
-## Supported APIs
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-The extension works with any OpenAI-compatible API, including:
+## 🚀 Future Enhancements
 
-- OpenAI
-- Local AI models with OpenAI-compatible APIs
+### Planned Features
+- [ ] Dark mode toggle
+- [ ] Keyboard shortcuts
 
-## YouTube Transcription Feature
+---
 
-The Neutral Summarizer includes special support for YouTube videos. Clicking 'Summarize Page' button on a YouTube video page will:
+**Built with ❤️ using Vibe-Coding**
 
-1. Retrieve the transcription of the YouTube video using the DumplingAI API
-2. Automatically summarize the video content in the sidebar
-3. Allow you to chat with the AI about the video content
-
-### Configuration
-
-To use the YouTube transcription feature, you need to configure your DumplingAI API key in the Settings tab:
-
-1. Go to the Settings tab in the sidebar
-2. Enter your DumplingAI API key in the "DumplingAi API Key" field
-3. Save your settings
-
-### How It Works
-
-1. When viewing a YouTube video, clicking the 'Summarize Page' button to initiate transcription
-2. The extension retrieves the video transcript using the DumplingAI API
-3. The transcript is then summarized using your configured AI model
-4. You can continue to chat with the AI about the video content
-
-Note: The YouTube transcription feature requires an internet connection to access the DumplingAI API.
-
-## Privacy
-
-This extension does not collect or store any personal data. All API requests are made directly from your browser to the configured API endpoint.
+> **Note**: This extension requires active API keys for full functionality.
