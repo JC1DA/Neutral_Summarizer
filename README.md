@@ -10,8 +10,12 @@ Here's what the Neutral Summarizer extension looks like in action:
 ![YouTube Video Analysis](data/images/example_1.png)
 *Extension analyzing a YouTube video with transcript-based AI processing*
 
-### Example 2: Settings Tab
-![Settings Interface](data/images/example_2.png)
+### Example 2: Webpage Analysis
+![Webpage Analysis](data/images/example_2.png)
+*Easy summarization and exploration of any webpage content*
+
+### Example 3: Settings Tab
+![Settings Interface](data/images/example_3.png)
 *Clean, modern sidebar interface*
 
 ## ✨ Key Features
