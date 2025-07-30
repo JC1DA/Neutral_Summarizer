@@ -78,7 +78,7 @@ The extension works with any OpenAI-compatible API, including:
 
 ## YouTube Transcription Feature
 
-The Neutral Summarizer includes special support for YouTube videos. When you visit a YouTube video page, the extension will automatically add a "Transcribe Video" button below the video title. Clicking this button will:
+The Neutral Summarizer includes special support for YouTube videos. Clicking 'Summarize Page' button on a YouTube video page will:
 
 1. Retrieve the transcription of the YouTube video using the DumplingAI API
 2. Automatically summarize the video content in the sidebar
@@ -94,11 +94,10 @@ To use the YouTube transcription feature, you need to configure your DumplingAI 
 
 ### How It Works
 
-1. When viewing a YouTube video, a "Transcribe Video" button appears below the video title
-2. Click the button to initiate transcription
-3. The extension retrieves the video transcript using the DumplingAI API
-4. The transcript is then summarized using your configured AI model
-5. You can continue to chat with the AI about the video content
+1. When viewing a YouTube video, clicking the 'Summarize Page' button to initiate transcription
+2. The extension retrieves the video transcript using the DumplingAI API
+3. The transcript is then summarized using your configured AI model
+4. You can continue to chat with the AI about the video content
 
 Note: The YouTube transcription feature requires an internet connection to access the DumplingAI API.
 
