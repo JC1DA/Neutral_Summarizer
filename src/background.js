@@ -38,6 +38,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true;
   }
+  
+  if (request.action === 'updateSidebarWidth') {
+    // Forward message to content script
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'updateSidebarWidth',
+          width: request.width
+        });
+      }
+    });
+    return true;
+  }
 });
 
 // Initialize settings when extension is installed

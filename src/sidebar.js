@@ -427,6 +427,12 @@ function applySettings(settings) {
     sidebarContainer.style.width = `${settings.sidebarWidth}px`;
   }
   
+  // Send message to update container width
+  chrome.runtime.sendMessage({
+    action: 'updateSidebarWidth',
+    width: settings.sidebarWidth
+  });
+  
   // Apply font size to chat messages
   const chatMessages = document.getElementById('chat-messages');
   if (chatMessages) {
