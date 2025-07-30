@@ -147,6 +147,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Add a temporary loading indicator
       messageElement.innerHTML = '<em>Generating summary from transcript...</em>';
       chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // console.log("Transcript Data:", transcriptData.transcript);
       
       // Generate summary using AI with streaming
       await generateYouTubeSummary(transcriptData.transcript, settings, messageElement);
@@ -187,9 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       const transcriptData = await response.json();
-
-      console.log("Transcript Data:", transcriptData);
-
       return transcriptData;
     } catch (error) {
       throw new Error(`Failed to get YouTube transcript: ${error.message}`);
