@@ -1112,11 +1112,11 @@ Notes:
       userPrompt += `Title: ${pageContent.title}\n`;
       userPrompt += `URL: ${pageContent.url}\n\n`;
       userPrompt += `${pageContent.content}\n\n`;
-      userPrompt += `Please provide:\n`;
-      userPrompt += `1. A concise summary of the video content\n`;
-      userPrompt += `2. Key points and main topics covered\n`;
-      userPrompt += `3. Information vs Opinion separation\n`;
-      userPrompt += `4. Overall sentiment and tone analysis\n`;
+      // userPrompt += `Please provide:\n`;
+      // userPrompt += `1. A concise summary of the video content\n`;
+      // userPrompt += `2. Key points and main topics covered\n`;
+      // userPrompt += `3. Information vs Opinion separation\n`;
+      // userPrompt += `4. Overall sentiment and tone analysis\n`;
       
       // Add transcript-specific instructions if transcript is available
       if (pageContent.youtubeData.hasTranscript) {
@@ -1170,8 +1170,8 @@ Notes:
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': window.location.href,
-          'X-Title': pageContent.title
+          // 'HTTP-Referer': window.location.href,
+          // 'X-Title': pageContent.title
         },
         body: JSON.stringify(requestBody)
       });
