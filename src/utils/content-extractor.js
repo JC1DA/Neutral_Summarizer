@@ -2,7 +2,7 @@
 class ContentExtractor {
   constructor() {
     this.defaultOptions = {
-      maxContentLength: 8000,
+      maxContentLength: 65536,
       preserveImages: false,
       preserveLinks: false,
       preserveStructure: true,

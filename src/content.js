@@ -1391,8 +1391,8 @@ Notes:
     }
     
     // Add content summary for context (limit to avoid overwhelming the AI)
-    const contentSummary = pageContent.content.length > 2000 ? 
-      pageContent.content.substring(0, 2000) + '...[content truncated]' : 
+    const contentSummary = pageContent.content.length > 65536 ? 
+      pageContent.content.substring(0, 65536) + '...[content truncated]' : 
       pageContent.content;
     
     systemPrompt += `\n\nPage Content Summary:\n${contentSummary}`;
@@ -1589,7 +1589,7 @@ Notes:
       }
       
       // Limit content length for API (but much larger than before)
-      const maxContentLength = 16000;
+      const maxContentLength = 65536;
       if (content && content.length > maxContentLength) {
         content = content.substring(0, maxContentLength) + '...[truncated]';
       }
