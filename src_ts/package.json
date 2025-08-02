@@ -1,0 +1,17 @@
+{
+  "name": "neutral-summarizer",
+  "version": "1.0.0",
+  "description": "Chrome extension for summarizing web pages and YouTube videos using AI",
+  "scripts": {
+    "build": "echo '🚀 Building Neutral Summarizer...' && rm -rf dist/* && npx tsc && sed -i '/export {};/d' dist/background.js && sed -i '/export {};/d' dist/content.js && cp ../src/manifest.json dist/ && cp -r ../src/assets dist/ && cp -r ../src/sidebar dist/ && cp -r ../src/popup dist/ && echo '✅ Build completed successfully!' && echo '📦 Extension ready in: src_ts/dist/'",
+    "clean": "rm -rf dist/* && echo '🧹 Build directory cleaned'",
+    "dev": "npx tsc --watch",
+    "compile": "npx tsc",
+    "copy-assets": "cp ../src/manifest.json dist/ && cp -r ../src/assets dist/ && cp -r ../src/sidebar dist/ && cp -r ../src/popup dist/ && echo '📋 Assets copied'",
+    "full-build": "npm run clean && npm run compile && npm run copy-assets && echo '🎉 Full build completed!'"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.1",
+    "typescript": "^5.9.2"
+  }
+}
