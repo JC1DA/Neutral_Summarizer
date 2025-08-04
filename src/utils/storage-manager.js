@@ -5,6 +5,7 @@ class StorageManager {
       baseUrl: 'https://openrouter.ai/api/v1',
       apiKey: '',
       dumplingApiKey: '',
+      pdf2markdownUrl: 'https://xtomd.vercel.app/api',
       modelName: 'qwen/qwen3-235b-a22b-2507',
       systemPrompt: `You are a helpful assistant that summarizes web pages. 
 Please provide a concise, neutral summary of the content provided. 

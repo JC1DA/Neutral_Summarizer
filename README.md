@@ -1,6 +1,6 @@
 # Neutral Summarizer Chrome Extension
 
-A powerful Chrome extension that leverages AI to provide intelligent summarization and interactive chat capabilities for any web page, with specialized YouTube video analysis using transcript-based AI processing.
+A powerful Chrome extension that leverages AI to provide intelligent summarization and interactive chat capabilities for any web page, with specialized YouTube video analysis using transcript-based AI processing and PDF document analysis.
 
 ## 🖼️ Extension Showcase
 
@@ -33,6 +33,12 @@ Here's what the Neutral Summarizer extension looks like in action:
 - **Transcript Retrieval**: Fetches complete video transcripts using DumplingAI API
 - **Enhanced Analysis**: AI analyzes both video content and transcript for comprehensive summaries
 - **Video Metadata**: Incorporates title, channel, views, likes, and description in analysis
+
+### 📄 PDF Document Analysis
+- **Automatic PDF Detection**: Recognizes when viewing PDF documents in the browser
+- **PDF to Markdown Conversion**: Converts PDF documents to clean Markdown format using external PDF2Markdown API
+- **Seamless Integration**: Works automatically with "Summarize Page" functionality
+- **Custom API Support**: Configure your own PDF2Markdown API endpoint in Settings
 
 ### 🎨 User Experience Enhancements
 - **Smart Chat Management**: "Summarize Page" automatically clears previous chat for focused analysis

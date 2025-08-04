@@ -37,6 +37,9 @@ class BackgroundService {
       case 'FETCH_YOUTUBE_TRANSCRIPT':
         await this.fetchYouTubeTranscript(data, sendResponse);
         break;
+      case 'CONVERT_PDF_TO_MARKDOWN':
+        await this.convertPDFToMarkdown(data, sendResponse);
+        break;
       default:
         console.warn('Unknown message type:', type);
         sendResponse({ success: false, error: 'Unknown message type' });
@@ -119,6 +122,7 @@ class BackgroundService {
       baseUrl: 'https://openrouter.ai/api/v1',
       apiKey: '',
       dumplingApiKey: '',
+      pdf2markdownUrl: 'https://xtomd.vercel.app/api',
       modelName: 'qwen/qwen3-235b-a22b-2507',
       systemPrompt: `You are a helpful assistant that summarizes web pages. 
 Please provide a concise, neutral summary of the content provided. 
@@ -183,6 +187,60 @@ Notes:
       
     } catch (error) {
       console.error('Error fetching YouTube transcript:', error);
+      sendResponse({ success: false, error: error.message });
+    }
+  }
+
+  async convertPDFToMarkdown(data, sendResponse) {
+    try {
+      const { pdfUrl, pdf2markdownUrl } = data;
+      
+      // Download the PDF first using background script's network permissions
+      const pdfResponse = await fetch(pdfUrl);
+      if (!pdfResponse.ok) {
+        throw new Error(`Failed to download PDF: ${pdfResponse.status} - ${pdfResponse.statusText}`);
+      }
+
+      const pdfBlob = await pdfResponse.blob();
+      
+      // Create FormData for the API request
+      const formData = new FormData();
+      formData.append('file', pdfBlob, 'document.pdf');
+
+      // Call the PDF2Markdown API from the background script
+      const response = await fetch(pdf2markdownUrl, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`PDF conversion failed: ${response.status} - ${response.statusText}`);
+      }
+
+      const resultText = await response.text();
+      
+      // Parse the JSON response
+      let result;
+      try {
+        result = JSON.parse(resultText);
+      } catch (parseError) {
+        // If it's not JSON, treat the whole response as markdown
+        result = {
+          results: [{
+            markdown: resultText
+          }]
+        };
+      }
+
+      // Return the markdown content
+      const markdownContent = result.results && result.results[0] && result.results[0].markdown 
+        ? result.results[0].markdown 
+        : resultText;
+
+      sendResponse({ success: true, markdown: markdownContent });
+
+    } catch (error) {
+      console.error('Error converting PDF to Markdown:', error);
       sendResponse({ success: false, error: error.message });
     }
   }

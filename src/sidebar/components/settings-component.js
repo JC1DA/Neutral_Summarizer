@@ -4,6 +4,7 @@ class SettingsComponent {
     this.baseUrlInput = document.getElementById('neutral-summarizer-base-url');
     this.apiKeyInput = document.getElementById('neutral-summarizer-api-key');
     this.dumplingKeyInput = document.getElementById('neutral-summarizer-dumpling-key');
+    this.pdf2markdownUrlInput = document.getElementById('neutral-summarizer-pdf2markdown-url');
     this.modelNameInput = document.getElementById('neutral-summarizer-model-name');
     this.systemPromptInput = document.getElementById('neutral-summarizer-system-prompt');
     this.sidebarWidthInput = document.getElementById('neutral-summarizer-sidebar-width');
@@ -69,6 +70,7 @@ class SettingsComponent {
     this.baseUrlInput.value = this.currentSettings.baseUrl || '';
     this.apiKeyInput.value = this.currentSettings.apiKey || '';
     this.dumplingKeyInput.value = this.currentSettings.dumplingApiKey || '';
+    this.pdf2markdownUrlInput.value = this.currentSettings.pdf2markdownUrl || 'https://xtomd.vercel.app/api';
     this.modelNameInput.value = this.currentSettings.modelName || '';
     this.systemPromptInput.value = this.currentSettings.systemPrompt || '';
     this.sidebarWidthInput.value = this.currentSettings.sidebarWidth || 400;
@@ -88,6 +90,7 @@ class SettingsComponent {
       baseUrl: this.baseUrlInput.value.trim(),
       apiKey: this.apiKeyInput.value.trim(),
       dumplingApiKey: this.dumplingKeyInput.value.trim(),
+      pdf2markdownUrl: this.pdf2markdownUrlInput.value.trim(),
       modelName: this.modelNameInput.value.trim(),
       systemPrompt: this.systemPromptInput.value.trim(),
       sidebarWidth: parseInt(this.sidebarWidthInput.value),
