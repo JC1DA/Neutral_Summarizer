@@ -1,2 +1,3 @@
 src_ts/dist/*
 src_ts/node_modules/*
+.env
