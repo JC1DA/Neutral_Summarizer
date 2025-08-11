@@ -124,6 +124,8 @@ Here's what the Neutral Summarizer extension looks like in action:
      - **Base OpenAI Compatible URL**: Your API endpoint (default: `https://openrouter.ai/api/v1`)
      - **API Key**: Your primary API key for AI services
      - **DumplingAI API Key**: Specialized API key for YouTube transcript extraction
+     - **PDF2Markdown API URL**: PDF to Markdown API Url. We are using free xtomd api by default
+         - You can deploy your own server by following intruction [here](https://github.com/huybik/xtomd)
      - **Model Name**: AI model to use (default: `qwen/qwen3-235b-a22b-2507`)
      - **System Prompt**: Customizable AI instructions (pre-configured with optimal defaults)
 
