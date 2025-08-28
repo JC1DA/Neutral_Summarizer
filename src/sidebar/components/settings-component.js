@@ -4,6 +4,7 @@ class SettingsComponent {
     this.baseUrlInput = document.getElementById('neutral-summarizer-base-url');
     this.apiKeyInput = document.getElementById('neutral-summarizer-api-key');
     this.dumplingKeyInput = document.getElementById('neutral-summarizer-dumpling-key');
+    this.dumplingUrlInput = document.getElementById('neutral-summarizer-dumpling-url');
     this.pdf2markdownUrlInput = document.getElementById('neutral-summarizer-pdf2markdown-url');
     this.modelNameInput = document.getElementById('neutral-summarizer-model-name');
     this.systemPromptInput = document.getElementById('neutral-summarizer-system-prompt');
@@ -39,7 +40,7 @@ class SettingsComponent {
     });
     
     // Save on Enter key for text inputs
-    [this.baseUrlInput, this.apiKeyInput, this.dumplingKeyInput, this.modelNameInput].forEach(input => {
+    [this.baseUrlInput, this.apiKeyInput, this.dumplingKeyInput, this.dumplingUrlInput, this.modelNameInput].forEach(input => {
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           this.saveSettings();
@@ -70,6 +71,7 @@ class SettingsComponent {
     this.baseUrlInput.value = this.currentSettings.baseUrl || '';
     this.apiKeyInput.value = this.currentSettings.apiKey || '';
     this.dumplingKeyInput.value = this.currentSettings.dumplingApiKey || '';
+    this.dumplingUrlInput.value = this.currentSettings.dumplingApiUrl || 'https://app.dumplingai.com/api/v1';
     this.pdf2markdownUrlInput.value = this.currentSettings.pdf2markdownUrl || 'https://xtomd.vercel.app/api';
     this.modelNameInput.value = this.currentSettings.modelName || '';
     this.systemPromptInput.value = this.currentSettings.systemPrompt || '';
@@ -90,6 +92,7 @@ class SettingsComponent {
       baseUrl: this.baseUrlInput.value.trim(),
       apiKey: this.apiKeyInput.value.trim(),
       dumplingApiKey: this.dumplingKeyInput.value.trim(),
+      dumplingApiUrl: this.dumplingUrlInput.value.trim(),
       pdf2markdownUrl: this.pdf2markdownUrlInput.value.trim(),
       modelName: this.modelNameInput.value.trim(),
       systemPrompt: this.systemPromptInput.value.trim(),
@@ -186,7 +189,7 @@ class SettingsComponent {
     
     // Disable all form inputs during save
     const inputs = [
-      this.baseUrlInput, this.apiKeyInput, this.dumplingKeyInput,
+      this.baseUrlInput, this.apiKeyInput, this.dumplingKeyInput, this.dumplingUrlInput,
       this.modelNameInput, this.systemPromptInput, 
       this.sidebarWidthInput, this.fontSizeInput
     ];

@@ -122,6 +122,7 @@ class BackgroundService {
       baseUrl: 'https://openrouter.ai/api/v1',
       apiKey: '',
       dumplingApiKey: '',
+      dumplingApiUrl: 'https://app.dumplingai.com/api/v1',
       pdf2markdownUrl: 'https://xtomd.vercel.app/api',
       modelName: 'qwen/qwen3-235b-a22b-2507',
       systemPrompt: `You are a helpful assistant that summarizes web pages. 
@@ -140,16 +141,17 @@ Notes:
 
   async fetchYouTubeTranscript(data, sendResponse) {
     try {
-      // Get DumplingAI API key from storage
-      const result = await chrome.storage.sync.get(['dumplingApiKey']);
+      // Get DumplingAI API key and URL from storage
+      const result = await chrome.storage.sync.get(['dumplingApiKey', 'dumplingApiUrl']);
       const dumplingApiKey = result.dumplingApiKey;
+      const dumplingApiUrl = result.dumplingApiUrl || 'https://app.dumplingai.com/api/v1';
       
       if (!dumplingApiKey) {
         sendResponse({ success: false, error: 'No DumplingAI API key available' });
         return;
       }
       
-      const apiEndpoint = "https://app.dumplingai.com/api/v1/get-youtube-transcript";
+      const apiEndpoint = `${dumplingApiUrl}/get-youtube-transcript`;
       
       const headers = {
         "Content-Type": "application/json",

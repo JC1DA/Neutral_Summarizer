@@ -149,7 +149,8 @@ class ChatComponent {
   }
 
   async getYouTubeTranscript() {
-    const response = await fetch('https://app.dumplingai.com/api/v1/get-youtube-transcript', {
+    const dumplingApiUrl = this.settings.dumplingApiUrl || 'https://app.dumplingai.com/api/v1';
+    const response = await fetch(`${dumplingApiUrl}/get-youtube-transcript`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

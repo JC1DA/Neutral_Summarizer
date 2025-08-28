@@ -151,13 +151,13 @@ class APIClient {
     };
   }
 
-  async getYouTubeTranscript(videoUrl, dumplingApiKey) {
+  async getYouTubeTranscript(videoUrl, dumplingApiKey, dumplingApiUrl = 'https://app.dumplingai.com/api/v1') {
     if (!dumplingApiKey) {
       throw new Error('DumplingAI API key is required');
     }
 
     try {
-      const response = await fetch('https://app.dumplingai.com/api/v1/get-youtube-transcript', {
+      const response = await fetch(`${dumplingApiUrl}/get-youtube-transcript`, {
         method: 'POST',
         headers: {
           ...this.defaultHeaders,

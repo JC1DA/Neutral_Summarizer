@@ -10,7 +10,6 @@
   ],
   "host_permissions": [
     "https://openrouter.ai/*",
-    "https://app.dumplingai.com/*",
     "https://*/*"
   ],
   "background": {

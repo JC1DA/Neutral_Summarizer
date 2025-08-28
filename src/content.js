@@ -685,12 +685,21 @@ class SidebarManager {
                 <input type="password" id="neutral-summarizer-api-key" placeholder="Enter your API key">
               </div>
               
+
               <div class="neutral-summarizer-settings-group">
                 <label for="neutral-summarizer-dumpling-key">
                   <span class="neutral-summarizer-label-icon">🥟</span>
                   DumplingAI API Key
                 </label>
                 <input type="password" id="neutral-summarizer-dumpling-key" placeholder="Enter DumplingAI API key">
+              </div>
+              
+              <div class="neutral-summarizer-settings-group">
+                <label for="neutral-summarizer-dumpling-url">
+                  <span class="neutral-summarizer-label-icon">🌐</span>
+                  Dumpling API URL
+                </label>
+                <input type="url" id="neutral-summarizer-dumpling-url" placeholder="https://app.dumplingai.com/api/v1" value="https://app.dumplingai.com/api/v1">
               </div>
               
               <div class="neutral-summarizer-settings-group">
@@ -1696,6 +1705,7 @@ Notes:
       baseUrl: document.getElementById('neutral-summarizer-base-url').value,
       apiKey: document.getElementById('neutral-summarizer-api-key').value,
       dumplingApiKey: document.getElementById('neutral-summarizer-dumpling-key').value,
+      dumplingApiUrl: document.getElementById('neutral-summarizer-dumpling-url').value,
       modelName: document.getElementById('neutral-summarizer-model-name').value,
       temperature: parseFloat(document.getElementById('neutral-summarizer-temperature').value),
       systemPrompt: document.getElementById('neutral-summarizer-system-prompt').value,
@@ -2204,6 +2214,7 @@ Notes:
       baseUrl: 'https://openrouter.ai/api/v1',
       apiKey: '',
       dumplingApiKey: '',
+      dumplingApiUrl: 'https://app.dumplingai.com/api/v1',
       modelName: 'qwen/qwen3-235b-a22b-2507',
       temperature: 0.3,
       systemPrompt: `You are a helpful assistant that summarizes web pages. 
@@ -2248,6 +2259,7 @@ Notes:
       baseUrl: 'https://openrouter.ai/api/v1',
       apiKey: '',
       dumplingApiKey: '',
+      dumplingApiUrl: 'https://app.dumplingai.com/api/v1',
       modelName: 'qwen/qwen3-235b-a22b-2507',
       temperature: 0.3,
       systemPrompt: `You are a helpful assistant that summarizes web pages. 
@@ -2304,6 +2316,14 @@ Notes:
       if (dumplingKeyInput) {
         dumplingKeyInput.value = settings.dumplingApiKey;
         console.log('Set dumplingApiKey');
+      }
+    }
+    
+    if (settings.dumplingApiUrl !== undefined) {
+      const dumplingUrlInput = document.getElementById('neutral-summarizer-dumpling-url');
+      if (dumplingUrlInput) {
+        dumplingUrlInput.value = settings.dumplingApiUrl || 'https://app.dumplingai.com/api/v1';
+        console.log('Set dumplingApiUrl');
       }
     }
     
