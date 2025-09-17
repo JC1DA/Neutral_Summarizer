@@ -988,7 +988,7 @@ Notes:
       }
       
       #neutral-summarizer-send-btn {
-        padding: 8px 16px;
+        padding: 12px 16px;
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         border: none;
@@ -999,6 +999,10 @@ Notes:
         box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
         min-width: 60px;
         font-size: calc(var(--neutral-summarizer-font-size, 14px) - 1px);
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       #neutral-summarizer-send-btn:hover {
