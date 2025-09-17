@@ -202,6 +202,19 @@ class ChatComponent {
     };
   }
 
+  // Helper method to sanitize header values to ensure ISO-8859-1 compliance
+  sanitizeHeaderValue(value) {
+    if (!value) return '';
+    
+    // Convert to string if not already
+    const stringValue = String(value);
+    
+    // Remove or replace non-ISO-8859-1 characters
+    return stringValue
+      .replace(/[^\x00-\xFF]/g, '') // Remove non-ISO-8859-1 characters
+      .replace(/[\x00-\x1F\x7F]/g, ''); // Remove control characters except space
+  }
+
   async generateAIResponse(userMessage, pageContent, systemPrompt = null) {
     if (!this.settings.apiKey || !this.settings.baseUrl) {
       throw new Error('API configuration is incomplete. Please check your settings.');
@@ -215,8 +228,8 @@ class ChatComponent {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.settings.apiKey}`,
-          'HTTP-Referer': window.location.href,
-          'X-Title': 'Neutral Summarizer Extension'
+          'HTTP-Referer': this.sanitizeHeaderValue(window.location.href),
+          'X-Title': this.sanitizeHeaderValue('Neutral Summarizer Extension')
         },
         body: JSON.stringify({
           model: this.settings.modelName || 'gpt-3.5-turbo',

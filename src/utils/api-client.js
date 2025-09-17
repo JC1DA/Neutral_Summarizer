@@ -34,6 +34,20 @@ class APIClient {
     }
   }
 
+  // Helper method to sanitize header values to ensure ISO-8859-1 compliance
+  sanitizeHeaderValue(value) {
+    if (!value) return '';
+    
+    // Convert to string if not already
+    const stringValue = String(value);
+    
+    // Remove or replace non-ISO-8859-1 characters
+    // This regex matches characters outside the ISO-8859-1 range
+    return stringValue
+      .replace(/[^\x00-\xFF]/g, '') // Remove non-ISO-8859-1 characters
+      .replace(/[\x00-\x1F\x7F]/g, ''); // Remove control characters except space
+  }
+
   async chatCompletion(messages, options = {}) {
     if (!this.settings.apiKey || !this.settings.baseUrl) {
       throw new Error('API configuration is incomplete. Please check your settings.');
@@ -62,8 +76,8 @@ class APIClient {
         headers: {
           ...this.defaultHeaders,
           'Authorization': `Bearer ${this.settings.apiKey}`,
-          'HTTP-Referer': window.location.href,
-          'X-Title': 'Neutral Summarizer Extension'
+          'HTTP-Referer': this.sanitizeHeaderValue(window.location.href),
+          'X-Title': this.sanitizeHeaderValue('Neutral Summarizer Extension')
         },
         body: JSON.stringify(payload)
       });

@@ -1349,9 +1349,8 @@ Notes:
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          // 'HTTP-Referer': window.location.href,
-          // 'X-Title': pageContent.title
+          'Authorization': `Bearer ${apiKey}`
+          // Note: Removed HTTP-Referer and X-Title headers to avoid encoding issues
         },
         body: JSON.stringify(requestBody)
       });
@@ -1599,14 +1598,27 @@ Notes:
     const apiKey = settings.apiKey || settings.dumplingApiKey;
 
     try {
+      // Helper method to sanitize header values to ensure ISO-8859-1 compliance
+      const sanitizeHeaderValue = (value) => {
+        if (!value) return '';
+        
+        // Convert to string if not already
+        const stringValue = String(value);
+        
+        // Remove or replace non-ISO-8859-1 characters
+        return stringValue
+          .replace(/[^\x00-\xFF]/g, '') // Remove non-ISO-8859-1 characters
+          .replace(/[\x00-\x1F\x7F]/g, ''); // Remove control characters except space
+      };
+
       // Make streaming API call
       const response = await fetch(`${apiUrl}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': window.location.href,
-          'X-Title': pageContent.title
+          'HTTP-Referer': sanitizeHeaderValue(window.location.href),
+          'X-Title': sanitizeHeaderValue(pageContent.title)
         },
         body: JSON.stringify(requestBody)
       });
