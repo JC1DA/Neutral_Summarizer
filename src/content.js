@@ -934,23 +934,27 @@ Notes:
       .neutral-summarizer-message.user {
         background: #dbeafe;
         margin-left: 20px;
+        color: black;
       }
       
       .neutral-summarizer-message.ai {
         background: #f3f4f6;
         margin-right: 20px;
+        color: black;
       }
       
       .neutral-summarizer-message.error {
         background: #fee2e2;
         color: #dc2626;
         border: 1px solid #fecaca;
+        color: black;
       }
       
       .neutral-summarizer-message.loading {
         background: #f3f4f6;
         color: #6b7280;
         font-style: italic;
+        color: black;
       }
       
       .neutral-summarizer-chat-input-container {
