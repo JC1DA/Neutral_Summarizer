@@ -57,7 +57,8 @@ class APIClient {
       model: this.settings.modelName || 'gpt-3.5-turbo',
       stream: true,
       temperature: 0.7,
-      max_tokens: 4000
+      // max_tokens: 4000
+      max_completion_tokens: 4096
     };
 
     const finalOptions = { ...defaultOptions, ...options };
@@ -67,7 +68,8 @@ class APIClient {
       messages: messages,
       stream: finalOptions.stream,
       temperature: finalOptions.temperature,
-      max_tokens: finalOptions.max_tokens
+      // max_tokens: finalOptions.max_tokens
+      max_completion_tokens: finalOptions.max_completion_tokens
     };
 
     try {

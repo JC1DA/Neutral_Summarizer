@@ -1342,7 +1342,8 @@ Notes:
           content: userPrompt
         }
       ],
-      max_tokens: 2048,
+      // max_tokens: 2048,
+      max_completion_tokens: 4096,
       temperature: settings.temperature || 0.3,
       stream: true  // Enable streaming mode
     };
@@ -1596,7 +1597,8 @@ Notes:
           content: userInput
         }
       ],
-      max_tokens: 1000,
+      // max_tokens: 1000,
+      max_completion_tokens: 4096,
       temperature: settings.temperature || 0.3,
       stream: true  // Enable streaming mode
     };
