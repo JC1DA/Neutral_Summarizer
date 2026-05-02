@@ -167,6 +167,7 @@ class SidebarManager {
     this.isVisible = false;
     this.sidebarContainer = null;
     this.overlay = null;
+    this.marked = null;
     this.init();
   }
 
@@ -803,6 +804,9 @@ Notes:
       // Load additional styles for components
       this.loadComponentStyles();
       
+      // Load marked library for markdown rendering
+      this.loadMarkedLibrary().catch(err => console.error('Failed to load marked library:', err));
+      
       console.log('All components loaded successfully');
 
     } catch (error) {
@@ -1146,6 +1150,346 @@ Notes:
     const styleElement = document.createElement('style');
     styleElement.textContent = styles;
     document.head.appendChild(styleElement);
+    
+    // Load markdown styles
+    this.loadMarkdownStyles();
+  }
+
+  async loadMarkedLibrary() {
+    if (this.marked) {
+      console.log('[Markdown] marked.js already loaded');
+      return Promise.resolve();
+    }
+    
+    try {
+      // Fetch and evaluate marked.js in the content script context
+      console.log('[Markdown] Fetching marked.js...');
+      const response = await fetch(chrome.runtime.getURL('assets/lib/marked.min.js'));
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch marked.js: ${response.status}`);
+      }
+      
+      const scriptContent = await response.text();
+      
+      // Execute the script in current context using eval
+      // marked.js UMD wrapper will set window.marked or module.exports
+      eval(scriptContent);
+      
+      // Try to get marked from various possible locations
+      this.marked = window.marked || (typeof module !== 'undefined' && module.exports) || 
+                    (typeof exports !== 'undefined' && exports.marked);
+      
+      if (this.marked && typeof this.marked.parse === 'function') {
+        this.setupMarkedOptions();
+        console.log('[Markdown] marked.js initialized successfully');
+        return Promise.resolve();
+      } else {
+        console.warn('[Markdown] marked loaded but parse function not found');
+        throw new Error('marked.parse is not a function');
+      }
+    } catch (error) {
+      console.error('[Markdown] Failed to load marked.js:', error);
+      console.log('[Markdown] Using fallback renderer instead');
+      // Don't throw - allow fallback to be used
+      return Promise.resolve();
+    }
+  }
+
+  setupMarkedOptions() {
+    if (this.marked) {
+      this.marked.setOptions({
+        breaks: true,
+        gfm: true,
+        headerIds: false,
+        mangle: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: true,
+        xhtml: false
+      });
+
+      const renderer = new this.marked.Renderer();
+      
+      renderer.link = (href, title, text) => {
+        const safeHref = this.sanitizeUrl(href);
+        const titleAttr = title ? ` title="${this.escapeHtml(title)}"` : '';
+        return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
+      };
+      
+      renderer.image = (href, title, text) => {
+        const safeHref = this.sanitizeUrl(href);
+        const titleAttr = title ? ` title="${this.escapeHtml(title)}"` : '';
+        return `<img src="${safeHref}" alt="${this.escapeHtml(text)}"${titleAttr} style="max-width: 100%; height: auto;">`;
+      };
+      
+      renderer.code = (code, language) => {
+        const escapedCode = this.escapeHtml(code);
+        const langAttr = language ? ` class="language-${this.escapeHtml(language)}"` : '';
+        return `<pre><code${langAttr}>${escapedCode}</code></pre>`;
+      };
+      
+      renderer.codespan = (code) => {
+        return `<code>${this.escapeHtml(code)}</code>`;
+      };
+      
+      renderer.heading = (text, level) => {
+        const escapedText = this.escapeHtml(text);
+        return `<h${level}>${escapedText}</h${level}>`;
+      };
+      
+      renderer.table = (header, body) => {
+        return `<table class="neutral-summarizer-table"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+      };
+      
+      renderer.tablecell = (content, flags) => {
+        const type = flags.header ? 'th' : 'td';
+        const align = flags.align ? ` style="text-align: ${flags.align}"` : '';
+        return `<${type}${align}>${content}</${type}>`;
+      };
+      
+      this.marked.setOptions({ renderer });
+    }
+  }
+
+  sanitizeUrl(url) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return '#';
+      }
+      return url;
+    } catch (error) {
+      return '#';
+    }
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  loadMarkdownStyles() {
+    const styleId = 'neutral-summarizer-markdown-styles';
+    if (document.getElementById(styleId)) return;
+
+    const styles = `
+      .neutral-summarizer-message.ai h1,
+      .neutral-summarizer-message.ai h2,
+      .neutral-summarizer-message.ai h3,
+      .neutral-summarizer-message.ai h4,
+      .neutral-summarizer-message.ai h5,
+      .neutral-summarizer-message.ai h6 {
+        color: #1f2937;
+        margin: 16px 0 8px 0;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+      
+      .neutral-summarizer-message.ai h1 {
+        font-size: 1.5em;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 4px;
+      }
+      
+      .neutral-summarizer-message.ai h2 {
+        font-size: 1.3em;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 2px;
+      }
+      
+      .neutral-summarizer-message.ai h3 {
+        font-size: 1.1em;
+      }
+      
+      .neutral-summarizer-message.ai h4 {
+        font-size: 1em;
+      }
+      
+      .neutral-summarizer-message.ai p {
+        margin: 8px 0;
+        line-height: 1.6;
+        color: #374151;
+      }
+      
+      .neutral-summarizer-message.ai ul,
+      .neutral-summarizer-message.ai ol {
+        margin: 8px 0;
+        padding-left: 24px;
+        color: #374151;
+      }
+      
+      .neutral-summarizer-message.ai li {
+        margin: 4px 0;
+        line-height: 1.5;
+      }
+      
+      .neutral-summarizer-message.ai code {
+        background: #f3f4f6;
+        color: #1f2937;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9em;
+      }
+      
+      .neutral-summarizer-message.ai pre {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 12px;
+        margin: 12px 0;
+        overflow-x: auto;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9em;
+        line-height: 1.4;
+      }
+      
+      .neutral-summarizer-message.ai pre code {
+        background: none;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+      }
+      
+      .neutral-summarizer-message.ai blockquote {
+        background: #f9fafb;
+        border-left: 4px solid #3b82f6;
+        margin: 12px 0;
+        padding: 8px 16px;
+        color: #6b7280;
+        font-style: italic;
+      }
+      
+      .neutral-summarizer-message.ai a {
+        color: #3b82f6;
+        text-decoration: underline;
+      }
+      
+      .neutral-summarizer-message.ai a:hover {
+        color: #2563eb;
+      }
+      
+      .neutral-summarizer-message.ai img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin: 8px 0;
+      }
+      
+      .neutral-summarizer-message.ai table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      
+      .neutral-summarizer-message.ai th,
+      .neutral-summarizer-message.ai td {
+        border: 1px solid #e5e7eb;
+        padding: 8px 12px;
+        text-align: left;
+      }
+      
+      .neutral-summarizer-message.ai th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .neutral-summarizer-message.ai tr:nth-child(even) {
+        background: #f9fafb;
+      }
+      
+      .neutral-summarizer-message.ai tr:hover {
+        background: #f3f4f6;
+      }
+      
+      .neutral-summarizer-message.ai hr {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 16px 0;
+      }
+      
+      .neutral-summarizer-message.ai strong {
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .neutral-summarizer-message.ai em {
+        font-style: italic;
+        color: #4b5563;
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .neutral-summarizer-message.ai h1,
+        .neutral-summarizer-message.ai h2,
+        .neutral-summarizer-message.ai h3,
+        .neutral-summarizer-message.ai h4,
+        .neutral-summarizer-message.ai h5,
+        .neutral-summarizer-message.ai h6 {
+          color: #f9fafb;
+        }
+        
+        .neutral-summarizer-message.ai p,
+        .neutral-summarizer-message.ai ul,
+        .neutral-summarizer-message.ai ol,
+        .neutral-summarizer-message.ai li {
+          color: #e5e7eb;
+        }
+        
+        .neutral-summarizer-message.ai code {
+          background: #374151;
+          color: #f9fafb;
+        }
+        
+        .neutral-summarizer-message.ai pre {
+          background: #1f2937;
+          border-color: #374151;
+          color: #f9fafb;
+        }
+        
+        .neutral-summarizer-message.ai blockquote {
+          background: #374151;
+          border-left-color: #60a5fa;
+          color: #9ca3af;
+        }
+        
+        .neutral-summarizer-message.ai a {
+          color: #60a5fa;
+        }
+        
+        .neutral-summarizer-message.ai a:hover {
+          color: #93c5fd;
+        }
+        
+        .neutral-summarizer-message.ai th,
+        .neutral-summarizer-message.ai td {
+          border-color: #374151;
+        }
+        
+        .neutral-summarizer-message.ai th {
+          background: #374151;
+          color: #f9fafb;
+        }
+        
+        .neutral-summarizer-message.ai tr:nth-child(even) {
+          background: #1f2937;
+        }
+        
+        .neutral-summarizer-message.ai tr:hover {
+          background: #374151;
+        }
+      }
+    `;
+
+    const styleElement = document.createElement('style');
+    styleElement.id = styleId;
+    styleElement.textContent = styles;
+    document.head.appendChild(styleElement);
   }
 
   setupChatEventListeners() {
@@ -1404,9 +1748,10 @@ Notes:
         
         for (const line of lines) {
           if (line.startsWith('data: ')) {
-            const data = line.slice(6);
+            const data = line.slice(6).trim();
             if (data === '[DONE]') {
-              return; // Stream finished
+              // Stream finished, break out of loop to process final content
+              break;
             }
             
             try {
@@ -1415,9 +1760,10 @@ Notes:
                 const content = parsed.choices[0].delta.content || '';
                 fullContent += content;
                 
-                // Update the streaming message
-                aiMsg.innerHTML = this.formatMarkdown(fullContent) + '<span class="streaming-cursor">▋</span>';
-                
+                // Update the streaming message with fallback renderer
+                // Fallback is more tolerant of incomplete markdown during streaming
+                const streamingHtml = this.formatMarkdownFallback(fullContent);
+                aiMsg.innerHTML = streamingHtml + '<span class="streaming-cursor">▋</span>';
                 // Auto-scroll to bottom
                 chatMessages.scrollTop = chatMessages.scrollHeight;
               }
@@ -1427,11 +1773,43 @@ Notes:
             }
           }
         }
+        
+        // Check if we received [DONE] in this batch
+        if (lines.some(line => line.startsWith('data: ') && line.slice(6).trim() === '[DONE]')) {
+          break;
+        }
+      }
+      
+      // Process any remaining content in the buffer
+      if (buffer.trim()) {
+        const lines = buffer.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim();
+            if (data === '[DONE]' || data === '') continue;
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta) {
+                const content = parsed.choices[0].delta.content || '';
+                fullContent += content;
+              }
+            } catch (e) {
+              console.debug('Final buffer parsing:', e);
+            }
+          }
+        }
       }
 
       // Remove streaming cursor and finalize message
-      aiMsg.innerHTML = this.formatMarkdown(fullContent);
+      // Re-render the complete content with full markdown parsing
+      // This ensures incomplete markdown during streaming is properly rendered
+      const finalHtml = await this.formatMarkdown(fullContent);
+      aiMsg.innerHTML = finalHtml;
       aiMsg.classList.remove('streaming');
+      
+      // Scroll to bottom after final render
+      chatMessages.scrollTop = chatMessages.scrollHeight;
 
     } catch (error) {
       console.error('Summarization API error:', error);
@@ -1453,16 +1831,119 @@ Notes:
     }
   }
 
-  formatMarkdown(text) {
-    // Simple markdown formatting for basic elements
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`(.*?)`/g, '<code>$1</code>')
-      .replace(/\n\n/g, '<br><br>')
-      .replace(/^(#+)\s+(.*)$/gm, '<h4>$2</h4>')
-      .replace(/^- (.*?)$/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  async formatMarkdown(text) {
+    // Load marked library if not already loaded
+    if (!this.marked) {
+      try {
+        console.log('[Markdown] marked not loaded, attempting to load...');
+        await this.loadMarkedLibrary();
+      } catch (error) {
+        console.error('[Markdown] Failed to load marked library, using fallback:', error);
+        return this.formatMarkdownFallback(text);
+      }
+    }
+
+    try {
+      if (this.marked) {
+        const result = this.marked.parse(text);
+        console.log('[Markdown] Rendered with marked.js, output length:', result.length);
+        return result;
+      }
+      console.log('[Markdown] marked not available, using fallback');
+      return this.formatMarkdownFallback(text);
+    } catch (error) {
+      console.error('[Markdown] Error rendering markdown:', error);
+      return this.formatMarkdownFallback(text);
+    }
+  }
+
+  formatMarkdownFallback(text) {
+    // Robust fallback markdown formatter
+    // Process in specific order to avoid conflicts
+    let html = text;
+    
+    // 1. Code blocks (triple backticks) - process first
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+      return `<pre><code class="language-${lang}">${this.escapeHtml(code.trim())}</code></pre>`;
+    });
+    
+    // 2. Inline code (single backticks) - before other processing
+    html = html.replace(/`([^`]+)`/g, (match, code) => {
+      return `<code>${this.escapeHtml(code)}</code>`;
+    });
+    
+    // 3. Headers - must process BEFORE bold/italic to avoid conflicts
+    // Match headers at start of line with optional leading whitespace
+    html = html.replace(/^\s*###\s+(.*$)/gm, '<h3>$1</h3>');
+    html = html.replace(/^\s*##\s+(.*$)/gm, '<h2>$1</h2>');
+    html = html.replace(/^\s*#\s+(.*$)/gm, '<h1>$1</h1>');
+    
+    // 4. Blockquotes (before lists, as they might start with >)
+    html = html.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+    
+    // 5. Horizontal rules (before list processing)
+    html = html.replace(/^---$/gm, '<hr>');
+    html = html.replace(/^\*\*\*$/gm, '<hr>');
+    html = html.replace(/^___$/gm, '<hr>');
+    
+    // 6. Unordered lists - match * or - at start of line (with optional whitespace)
+    // This handles both standalone list items and lists after paragraphs
+    html = html.replace(/^[ \t]*[*\-]\s+(.*$)/gm, '<li>$1</li>');
+    
+    // 7. Wrap consecutive li elements in ul
+    html = html.replace(/(<li>.*?<\/li>\n?)+/gs, (match) => {
+      return '<ul>' + match + '</ul>';
+    });
+    
+    // 8. Bold (double asterisks or underscores) - after list processing
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    
+    // 9. Italic (single asterisks or underscores)
+    // Be careful not to match list bullets or already processed bold
+    html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+    html = html.replace(/(?<!_)_(?!_)(.+?)(?<!_)_(?!_)/g, '<em>$1</em>');
+    
+    // 10. Links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, href) => {
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    });
+    
+    // 11. Images
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+      return `<img src="${src}" alt="${alt}" style="max-width: 100%; height: auto;">`;
+    });
+    
+    // 12. Line breaks and paragraphs
+    // Split by double newlines for paragraphs
+    const paragraphs = html.split(/\n\n+/);
+    html = paragraphs.map(p => {
+      p = p.trim();
+      if (!p) return '';
+      // Don't wrap if already a block element
+      if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<pre') || 
+          p.startsWith('<blockquote') || p.startsWith('<hr') || p.startsWith('<li')) {
+        return p;
+      }
+      // Replace single newlines with <br> within paragraphs
+      p = p.replace(/\n/g, '<br>');
+      return `<p>${p}</p>`;
+    }).join('');
+    
+    // 13. Clean up any artifacts
+    html = html.replace(/<p><\/p>/g, '');
+    html = html.replace(/<p>(<h[1-6]>)/g, '$1');
+    html = html.replace(/(<\/h[1-6]>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<ul>)/g, '$1');
+    html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<pre>)/g, '$1');
+    html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<blockquote>)/g, '$1');
+    html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<hr>)/g, '$1');
+    html = html.replace(/(<hr>)<\/p>/g, '$1');
+    
+    return html;
   }
 
   clearChat() {
@@ -1673,9 +2154,10 @@ Notes:
         
         for (const line of lines) {
           if (line.startsWith('data: ')) {
-            const data = line.slice(6);
+            const data = line.slice(6).trim();
             if (data === '[DONE]') {
-              return; // Stream finished
+              // Stream finished, break out of loop to process final content
+              break;
             }
             
             try {
@@ -1684,9 +2166,10 @@ Notes:
                 const content = parsed.choices[0].delta.content || '';
                 fullContent += content;
                 
-                // Update the streaming message
-                aiMsg.innerHTML = this.formatMarkdown(fullContent) + '<span class="streaming-cursor">▋</span>';
-                
+                // Update the streaming message with fallback renderer
+                // Fallback is more tolerant of incomplete markdown during streaming
+                const streamingHtml = this.formatMarkdownFallback(fullContent);
+                aiMsg.innerHTML = streamingHtml + '<span class="streaming-cursor">▋</span>';
                 // Auto-scroll to bottom
                 chatMessages.scrollTop = chatMessages.scrollHeight;
               }
@@ -1696,11 +2179,43 @@ Notes:
             }
           }
         }
+        
+        // Check if we received [DONE] in this batch
+        if (lines.some(line => line.startsWith('data: ') && line.slice(6).trim() === '[DONE]')) {
+          break;
+        }
+      }
+      
+      // Process any remaining content in the buffer
+      if (buffer.trim()) {
+        const lines = buffer.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim();
+            if (data === '[DONE]' || data === '') continue;
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta) {
+                const content = parsed.choices[0].delta.content || '';
+                fullContent += content;
+              }
+            } catch (e) {
+              console.debug('Final buffer parsing:', e);
+            }
+          }
+        }
       }
 
       // Remove streaming cursor and finalize message
-      aiMsg.innerHTML = this.formatMarkdown(fullContent);
+      // Re-render the complete content with full markdown parsing
+      // This ensures incomplete markdown during streaming is properly rendered
+      const finalHtml = await this.formatMarkdown(fullContent);
+      aiMsg.innerHTML = finalHtml;
       aiMsg.classList.remove('streaming');
+      
+      // Scroll to bottom after final render
+      chatMessages.scrollTop = chatMessages.scrollHeight;
 
     } catch (error) {
       console.error('Chat API error:', error);
